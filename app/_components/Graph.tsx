@@ -58,7 +58,7 @@ export default function Graph({ graph: { nodes, edges } }: Readonly<GraphProps>)
               const node = evt.target;
               const nodeData = node.data();
               if (typeof nodeData.id === "string") {
-                const path = "/note/" + node.data().id;
+                const path = "/wiki/" + node.data().id;
                 router.push(path);
               }
             });

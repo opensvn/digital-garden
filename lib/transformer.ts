@@ -63,7 +63,7 @@ export const Transformer = {
   hrefTemplate: function (permalink: string) {
     // permalink = Transformer.normalizeFileName(permalink)
     permalink = permalink.replace('ç', 'c').replace('ı', 'i').replace('ş', 's');
-    return `/note/${permalink}`;
+    return `/wiki/${permalink}`;
   },
   getHtmlContent: function (content: string) {
     const htmlContent: string[] = [];

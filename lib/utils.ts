@@ -390,7 +390,7 @@ function parseToPostData(rawData: RawPostData): ParsedPostData {
     const fileName = Transformer.parseFileNameFromPath(toFilePath(slug) ?? "");
     return Transformer.normalizeFileName(fileName ?? "") === Transformer.normalizeFileName(rawData.name);
   });
-  const routePath = `/note/${routeFromFilePath}`;
+  const routePath = `/wiki/${routeFromFilePath}`;
   return {
     id: rawData.path,
     name: rawData.name,
