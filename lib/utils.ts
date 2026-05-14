@@ -92,8 +92,10 @@ export function getSlugHashMap() {
 }
 
 export function toSlug(filePath: string) {
-  if (Node.isFile(filePath) && filePath.includes(Node.getMarkdownFolder())) {
-    let escapedFilePath = filePath.replace(Node.getMarkdownFolder(), "");
+  const relativeFilePath = path.relative(Node.getMarkdownFolder(), filePath);
+  const isInMarkdownFolder = relativeFilePath.length > 0 && !relativeFilePath.startsWith("..") && !path.isAbsolute(relativeFilePath);
+  if (Node.isFile(filePath) && isInMarkdownFolder) {
+    let escapedFilePath = `/${relativeFilePath.replace(/\\/g, "/")}`;
     Object.entries(PATH_ESCAPE_TABLE).forEach(
       ([escapeTarget, escapeString]) =>
         (escapedFilePath = escapedFilePath.replaceAll(escapeTarget, escapeString)),
@@ -271,6 +273,13 @@ interface DirectoryTree {
   children?: DirectoryTree[] | undefined;
 }
 
+function toTreeDirectoryPath(directoryPath: string) {
+  const normalizedRoot = Node.getMarkdownFolder().replace(/\\/g, "/").replace(/\/$/, "");
+  const normalizedDirectory = directoryPath.replace(/\\/g, "/").replace(/\/$/, "");
+  const relativeDirectory = path.posix.relative(normalizedRoot, normalizedDirectory);
+  return relativeDirectory.length > 0 ? `wiki/${relativeDirectory}` : "wiki";
+}
+
 export function getDirectoryData(): DirectoryTree {
   const rootDir = Node.getMarkdownFolder();
   // console.time("fdir time");
@@ -283,17 +292,19 @@ export function getDirectoryData(): DirectoryTree {
     .sync();
 
   return files.sort((prev, next) => {
-    const prevDepth = prev.directory.split("/").length;
-    const nextDepth = next.directory.split("/").length;
+    const prevDirectory = toTreeDirectoryPath(prev.directory);
+    const nextDirectory = toTreeDirectoryPath(next.directory);
+    const prevDepth = prevDirectory.split("/").length;
+    const nextDepth = nextDirectory.split("/").length;
 
     if (prevDepth !== nextDepth) {
       return prevDepth - nextDepth;
     }
 
-    return prev.directory.localeCompare(next.directory);
+    return prevDirectory.localeCompare(nextDirectory);
   }).reduce((acc, dirInfo, index) => {
     if (index === 0) {
-      const rawDir = dirInfo.directory.slice(0, dirInfo.directory.length - 1);
+      const rawDir = toTreeDirectoryPath(dirInfo.directory);
       acc["path"] = rawDir;
       acc["name"] = rawDir.split("/").pop() ?? "";
       acc["type"] = "directory";
@@ -316,7 +327,7 @@ const handleNestedTree = (parent: DirectoryTree, dirInfo: Group): DirectoryTree 
     return parent;
   }
 
-  const rawDir = dirInfo.directory.slice(0, dirInfo.directory.length - 1).split("/");
+  const rawDir = toTreeDirectoryPath(dirInfo.directory).split("/");
   const dirName = rawDir.pop() ?? "";
   const parentPath = rawDir.join("/");
 
@@ -368,7 +379,7 @@ export function convertObject(
 
 function parseToDirectoryData(rawData: DirectoryTree): ParsedPostDirectoryData {
   return {
-    id: rawData.name,
+    id: rawData.path,
     name: rawData.name,
     children: rawData.children?.map(rawPost => convertObject(rawPost)) ?? [],
   };
@@ -381,7 +392,7 @@ function parseToPostData(rawData: RawPostData): ParsedPostData {
   });
   const routePath = `/note/${routeFromFilePath}`;
   return {
-    id: rawData.name,
+    id: rawData.path,
     name: rawData.name,
     routePath,
   };

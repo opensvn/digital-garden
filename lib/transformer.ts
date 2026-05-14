@@ -140,13 +140,10 @@ export const Transformer = {
   },
   /* Parse file name from path then sanitize it */
   parseFileNameFromPath: function (filepath: string) {
-    if (filepath.includes('/')) {
-      const parsedFileFromPath = filepath.split('/')[filepath.split('/').length - 1];
-      return parsedFileFromPath.replace('.md', '');
-    } else {
-      console.log('Failed: CANNOT Parse' + filepath);
-      return null;
-    }
+    const parsedFileFromPath = filepath.split(/[\\/]/).pop();
+    return parsedFileFromPath != null && parsedFileFromPath.length > 0
+      ? parsedFileFromPath.replace('.md', '')
+      : null;
   },
   /* Pair provided and existing Filenames*/
   getInternalLinks: function (aFilePath: string) {
