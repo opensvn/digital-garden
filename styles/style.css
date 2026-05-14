@@ -111,6 +111,32 @@ a:hover {
     padding: 4px 8px;
 }
 
+.markdown-rendered table {
+    border-collapse: collapse;
+    display: block;
+    margin: 1em 0;
+    max-width: 100%;
+    overflow-x: auto;
+    width: max-content;
+}
+
+.markdown-rendered th,
+.markdown-rendered td {
+    border: 1px solid var(--background-modifier-border);
+    padding: 6px 12px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.markdown-rendered th {
+    background-color: var(--background-primary-alt);
+    font-weight: 700;
+}
+
+.markdown-rendered tr:nth-child(even) {
+    background-color: var(--background-secondary);
+}
+
 .nav-bar {
     width: 300px;
     flex: 0 0 300px;

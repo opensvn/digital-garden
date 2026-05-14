@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "rm -rf graph-data.json && next dev --turbo",
+    "test": "tsx --test test/**/*.test.ts",
     "build": "rm -rf graph-data.json && next build",
     "start": "next start",
     "deploy": "pnpm build && git add . && git commit -m '...' && git push"
@@ -40,6 +41,7 @@
     "rehype-stringify": "^10.0.1",
     "remark": "^15.0.1",
     "remark-collapse": "^0.1.2",
+    "remark-gfm": "^4.0.1",
     "remark-html": "^16.0.1",
     "remark-parse": "^11.0.0",
     "remark-preset-lint-markdown-style-guide": "^6.0.1",
@@ -64,6 +66,7 @@
     "remark-frontmatter": "^5.0.0",
     "remark-react": "^10.0.0",
     "remark-stringify": "^11.0.0",
+    "tsx": "^4.21.0",
     "typescript": "5.8.3",
     "uuid": "^11.1.0"
   }

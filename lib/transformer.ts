@@ -1,6 +1,7 @@
 import matter, { Input } from 'gray-matter';
 import { unified } from 'unified';
 import markdown from 'remark-parse';
+import remarkGfm from 'remark-gfm';
 import { wikiLinkPlugin } from 'remark-wiki-link';
 import html from 'remark-html';
 import frontmatter from 'remark-frontmatter';
@@ -69,7 +70,8 @@ export const Transformer = {
     const sanitizedContent = Transformer.preprocessThreeDashes(content);
 
     unified()
-      .use(markdown, { gfm: true })
+      .use(markdown)
+      .use(remarkGfm)
       .use(obsidianImage)
       .use(highlight)
       .use(externalLinks, { target: '_blank', rel: ['noopener'] })
@@ -101,14 +103,11 @@ export const Transformer = {
 
   /* SANITIZE MARKDOWN FOR --- */
   preprocessThreeDashes: function (content: string) {
-    const indexOfFirst = content.indexOf('---');
-    if (indexOfFirst === -1) {
+    if (!content.startsWith('---')) {
       return content;
     }
-    const indexOfSecond = content.indexOf('---', indexOfFirst + 1);
-    content.slice(0, indexOfSecond);
-    const contentPart = content.slice(indexOfSecond);
-    return contentPart.split('---').join('');
+
+    return matter(content).content;
   },
 
   /* Normalize File Names */
@@ -151,7 +150,8 @@ export const Transformer = {
     const internalLinks: BackLink[] = [];
     const sanitizedContent = Transformer.preprocessThreeDashes(fileContent);
     unified()
-      .use(markdown, { gfm: true })
+      .use(markdown)
+      .use(remarkGfm)
       .use(wikiLinkPlugin, {
         pageResolver: function (pageName: string) {
           // let name = [Transformer.parseFileNameFromPath(pageName)];
