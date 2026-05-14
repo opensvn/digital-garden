@@ -39,6 +39,6 @@ export const Node = {
   },
 
   getMarkdownFolder: function() {
-    return path.join(process.cwd(), "posts");
+    return path.join(process.cwd(), "wiki");
   },
 };
