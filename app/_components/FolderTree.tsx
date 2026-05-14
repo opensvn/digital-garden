@@ -16,28 +16,21 @@ export default function FolderTree({ tree, flattenNodes }: Readonly<FolderTreePr
   const pathname = usePathname();
   const currentPost = React.useMemo(() => {
     return flattenNodes.find(aNode => {
-      return "routePath" in aNode && aNode.routePath === pathname;
+      return "routePath" in aNode && aNode.routePath === decodeURIComponent(pathname);
     });
   }, [flattenNodes, pathname]);
   const currentAncestorIds = React.useMemo(() => {
     return getAncestorIds(currentPost?.id ?? tree.id);
   }, [currentPost?.id, tree.id]);
-  const [expandedItems, setExpandedItems] = React.useState<string[]>(currentAncestorIds);
-
-  React.useEffect(() => {
-    setExpandedItems(previousItems => {
-      return Array.from(new Set([...previousItems, ...currentAncestorIds]));
-    });
-  }, [currentAncestorIds]);
-
   const renderTree = (nodes: ParsedPostDirectoryData | ParsedPostData) => (
     <TCTreeItem key={nodes.id} label={nodes.name} itemId={nodes.id}>
       {"children" in nodes ? nodes.children.map(node => renderTree(node)) : null}
     </TCTreeItem>
   );
-  
+
   return (
     <SimpleTreeView
+      key={pathname}
       aria-label="rich object"
       onItemFocus={(event, selectedItemText) => {
         const selectedPost = flattenNodes.find(aNode => {
@@ -47,8 +40,7 @@ export default function FolderTree({ tree, flattenNodes }: Readonly<FolderTreePr
           router.push(selectedPost.routePath);
         }
       }}
-      expandedItems={expandedItems}
-      onExpandedItemsChange={(event, itemIds) => setExpandedItems(itemIds)}
+      defaultExpandedItems={currentAncestorIds}
       sx={{ flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
     >
       {renderTree(tree)}
