@@ -310,7 +310,7 @@ export function getDirectoryData(): DirectoryTree {
       acc["type"] = "directory";
       acc["children"] = dirInfo.files.map((fileName) => ({
         path: `${rawDir}/${fileName}`,
-        name: fileName,
+        name: fileName.replace(/\.md$/, ""),
         type: "file",
       }));
       return acc;
@@ -340,7 +340,7 @@ const handleNestedTree = (parent: DirectoryTree, dirInfo: Group): DirectoryTree 
       type: "directory",
       children: dirInfo.files.map((fileName: string) => ({
         path: `${parentPath}/${dirName}/${fileName}`,
-        name: fileName,
+        name: fileName.replace(/\.md$/, ""),
         type: "file",
       })),
     };
