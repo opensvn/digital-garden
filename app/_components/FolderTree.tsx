@@ -5,6 +5,7 @@ import { SimpleTreeView, TreeItem } from "@mui/x-tree-view";
 import { usePathname, useRouter } from "next/navigation";
 import { styled } from "@mui/material/styles";
 import { ParsedPostData, ParsedPostDirectoryData } from "../../lib/utils";
+import { isCurrentRoutePath } from "../../lib/routePath";
 
 interface FolderTreeProps {
   tree: ParsedPostDirectoryData;
@@ -16,7 +17,7 @@ export default function FolderTree({ tree, flattenNodes }: Readonly<FolderTreePr
   const pathname = usePathname();
   const currentPost = React.useMemo(() => {
     return flattenNodes.find(aNode => {
-      return "routePath" in aNode && aNode.routePath === decodeURIComponent(pathname);
+      return "routePath" in aNode && isCurrentRoutePath(aNode.routePath, pathname);
     });
   }, [flattenNodes, pathname]);
   const currentAncestorIds = React.useMemo(() => {
