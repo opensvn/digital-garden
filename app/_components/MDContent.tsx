@@ -46,7 +46,7 @@ function BackLinks({ linkList }: Readonly<BackLinksProps>) {
           {linkList.map(aLink => (
             <div key={aLink?.slug ?? ""} className="backlink">
               {/*<Link href={aLink.slug}>*/}
-              <a href={aLink?.slug ?? ""}>
+              <a href={`/wiki/${aLink?.slug ?? ""}`}>
                 <p className="backlink-title">{aLink?.title ?? ""}</p>
                 <p className="backlink-preview">{aLink?.shortSummary ?? ""} </p>
               </a>
