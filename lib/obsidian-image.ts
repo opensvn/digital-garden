@@ -28,8 +28,8 @@ export interface Node {
     children?: unknown;
 }
 
-const regex = /\!\[\[(([a-z\-_0-9\\/\:]+\s*)+\.(jpg|jpeg|png|gif|svg|webp))]]/gi;
-const regex2 = /\!\[\[(([a-z\-_0-9\\/\:]+\s*)+\.(jpg|jpeg|png|gif|svg|webp))]]/gi; //TODO why can't I reuse regex literal???
+const regex = /\!\[\[(([^\s\]]+\s*)+\.(jpg|jpeg|png|gif|svg|webp))]]/gi;
+const regex2 = /\!\[\[(([^\s\]]+\s*)+\.(jpg|jpeg|png|gif|svg|webp))]]/gi; //TODO why can't I reuse regex literal???
 
 function convertTextNode(node: Node) {
     const searchText = node.value;
@@ -74,10 +74,11 @@ function convertTextNode(node: Node) {
             value: searchText.substring(startIndex, endIndex),
         };
 
+        // Remove leading images/ prefix if present to avoid double /images/
+        const imagePath = match[1].startsWith('images/') ? match[1].substring(7) : match[1];
         const imageNode = {
             type: "image",
-            //TODO: Use some kind of option to pass in default images path
-            url: encodeURI(`/images/${match[1]}`), //encode white space from file name
+            url: encodeURI(`/images/${imagePath}`), //encode white space from file name
             alt: match[1],
         };
 
